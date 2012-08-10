@@ -232,7 +232,7 @@ EOU
     if $echo_level < level
       return true
     end
-    (level < 3 ? $stderr : $stdout).print msg
+    (level < 3 ? $stderr : $stdout).print msg.join
   end
   
   ##
