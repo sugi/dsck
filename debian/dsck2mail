@@ -1,0 +1,17 @@
+= NAME
+
+dsck2mail - simple disck usage notifier via sendmail
+
+= SYNOPSIS
+
+((*dsck2mail*))
+
+= DESCRIPTOIN
+
+((*dsck2mail*)) was designed which is used with cron.
+If dsck exit with alert, send it to root as mail.
+
+= BUGS
+
+((*dsck2mail*)) just exec sendmail. Thus, this will not work
+when mail spool directory (e.g. /var) is completely full.
