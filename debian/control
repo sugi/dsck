@@ -2,12 +2,12 @@ Source: dsck
 Section: admin
 Priority: optional
 Maintainer: Tatsuki Sugiura <sugi@nemui.org>
-Build-Depends-Indep: debhelper (>> 3.0.0), rdtool
-Standards-Version: 3.5.8
+Build-Depends-Indep: debhelper (>= 7.0.50~), rdtool
+Standards-Version: 3.9.3
 
 Package: dsck
 Architecture: all
-Depends: postfix | sendmail | qmail | exim | mail-transport-agent, ruby1.9.1 | ruby1.9.3 | ruby1.9, ruby-filesystem
+Depends: ${misc:Depends}, postfix | sendmail | qmail | exim | mail-transport-agent, ruby | ruby-interpreter, ruby-filesystem
 Description: simple disk space checker
  disck space chcker with ruby.
  checks filesystem disk space usage by cron.
