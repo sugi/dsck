@@ -1,3 +1,9 @@
+dsck (2.0.9) unstable; urgency=low
+
+  * Fix header formatting.
+
+ -- Tatsuki Sugiura <sugi@nemui.org>  Sat, 11 Aug 2012 05:16:23 +0900
+
 dsck (2.0.8) unstable; urgency=low
 
   * Transit to Debian native package.
