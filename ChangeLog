@@ -1,0 +1,46 @@
+2004-01-14  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* release 2.0.7
+
+	* dsck2mail: fixup abort on errors.
+
+2003-09-21  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* release 2.0.6
+
+	* dsck: small for ruby 1.8
+
+2003-07-31  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* release 2.0.5
+
+	* dsck: exit with 1 if errors. better option handling.
+
+2003-04-16  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* release 2.0.4
+
+	* dsck: ignore linux bind mount.
+
+2003-04-07  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* release 2.0.3
+
+	* dsck: report format changed. good looking with folding.
+
+2003-02-03  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* release 2.0.2
+
+	* fix typo in report
+
+	* fix Makefile.am for distclean error
+
+2002-07-31  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* add dsck2mail script
+
+2002-07-31  Tatsuki Sugiura  <sugi@nemui.org>
+
+	* Initial release with ruby.
+

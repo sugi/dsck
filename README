@@ -1,0 +1,25 @@
+What's this?
+
+ Simple disk space checker
+
+System requirement
+
+ - ruby (1.6-)
+ - filesystem module
+
+Install
+
+ ./configure
+ make
+ make install
+
+Supports
+
+ - dsck2mail
+   sample shell wrapper script for crontab.
+   To install this script, call ./configure with "--with-dsck2mail".
+
+Usage
+
+ see, "rd2 dsck"
+

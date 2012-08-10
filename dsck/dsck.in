@@ -1,0 +1,346 @@
+#!@ruby@ -w
+# -*- ruby -*-
+
+#
+# dsck - simple disk space checker
+#
+# copyright: Tatsuki Sugiura <sugi@nemui.org>
+# license:   GPL2
+#
+
+=begin
+
+= NAME
+
+((:dsck:)) - simple disk space checker
+
+= SYNOPSIS
+
+((%dsck [-Vhv] <-c config | global_threshold | /mount/point threshold>...%))
+
+= DESCRIPTION
+
+== Options
+
+If both "-s" and "-r" not specified, set "-se" automatically.
+
+: -V, --version
+  show version
+: -h, --help
+  show this message
+: -v, --verbose
+  verbose output. multiple -v for increase verbosity
+: -q, --quiet
+  quiet output. multiple -q for decrease verbosity
+: -s, --summary
+  show summary report
+: -r, --report
+  show detail report
+: -e, --errors-only
+  suppress "-r" and "-s" when nothing to alert  
+: -c ((|conf|)), --config=((|conf|))
+  specify config file (arguments prevail over config)
+
+== Threshold Format
+
+If argument is matched regex of (({/[0-9]+([BKMGTb%])?/})) or
+"nocheck". Then, it considerd as threshold.
+
+Suffix character was consider as ((*B*))=byte, ((*K*))=KiloByte, ((*M*))=Megabyte,
+((*G*))=GigaByte, ((*T*))=TeraByte, ((*b*))=blocks and ((*%*))=Percent.
+
+When string has not suffix character, strig they longer than ((*3*)) will
+consider ((*KiloByte*)), if not ((*Percent*)).
+
+This script alert when use% is ((*over*)) threshold of percentage or
+filesystem available size is ((*under*)) threshold of Byte and blocks.
+
+== ConfigFile Format
+
+Same as command line arguments.
+
+Especially, after "#" until end-of-line is considerd as comment.
+
+= Example
+
+((%dsck -serv "95%" / 50M /tmp 5 /var/spool/squid nocheck%))
+
+This is mean
+* verbose output (+1)
+* show summary and detail when error happened
+* global threshold is 95%, "/" is 50MByte, "/tmp" is 5%
+* "/var/spool/squid" will not checked
+
+=end
+
+
+require "getoptlong"
+require "filesystem"
+
+$MYNAME  = File.basename($0)
+$VERSION = "2.0.5"
+
+##
+## classes
+##
+class DiskSpaceCheker < Hash
+  class NonExistMountPoint < StandardError; end
+  class InvalidThreshold   < StandardError; end
+  
+  def initialize (global_threshold = "85%")
+    @mounts = FileSystem.mounts.collect{|m|
+      (# exclude virtual filesystem
+       FileSystem.stat(m.mount).blocks != 0 &&
+       # exclude Linux bind mount
+       m.options.split(",").reject{|o| o != "bind" }.length == 0
+       ) ? m.mount : nil }.compact
+    @global_threshold = thres_normalizer(global_threshold)
+  end
+
+  def []=(key, val)
+    unless @mounts.member?(key)
+      raise NonExistMountPoint
+    end
+    val = thres_normalizer(val)
+    super
+  end
+
+  def [](mount)
+    self.member?(mount) ? super : @global_threshold
+  end
+    
+  def need_alert?
+    @mounts.each { |mount|
+      if over?(mount)
+	return true
+      end
+    }
+    false
+  end
+  alias error? need_alert? 
+
+  def global_threshold=(thres)
+    @global_threshold = thres_normalizer(thres)
+  end
+
+  def thres_normalizer(thres)
+    if thres !~ /^\d+[KBbMGT%]?$/ && thres != "nocheck"
+      raise InvalidThreshold
+    elsif thres !~ /\D/
+      if thres.length < 3
+	thres = thres + "%"
+      else 
+	thres = thres + "K"
+      end
+    end
+    return thres
+  end
+
+  def over?(mount)
+    unless @mounts.member?(mount)
+      raise NonExistMountPoint
+    end
+    stat  = FileSystem.stat(mount)
+    thres = self[mount]
+    if thres == "nocheck"
+      return false
+    elsif thres =~ /^(\d+)%$/
+      thres = stat.block_size * stat.blocks * (100 - $1.to_i) / 100
+    elsif thres =~ /^(\d+)([BKMGT])$/
+      thres = $1.to_i * (1 << (10 * %w(B K M G T).index($2).to_i))
+    else
+      thres.sub!(/(b)$/,"")
+      threshold = threshold.to_i * stat.block_size
+    end
+    stat.blocks_avail * stat.block_size <= thres
+  end
+  
+
+  def summary
+    ret = Array.new
+    @mounts.each { |m|
+      if over?(m)
+	dev = FileSystem.mounts.reject{|mts| mts.mount != m }.first.device
+	ret.push("Warning: #{dev} (#{m}) " +
+		 (self[m] =~ /%$/ ? "used over" : "less than") +
+		 " #{self[m]}.")
+      end
+    }
+    ret.size > 0 ? ret : ["All good."]
+  end
+
+  def report
+    ret     = [%w(Device Mounted Size(K) Avail(K) Use% Threshold Status)]
+    FileSystem.mounts.each { |mts|
+      mount = mts.mount
+      unless @mounts.member?(mount)
+	next;
+      end
+      stat  = FileSystem.stat(mount)
+      size  = stat.blocks * stat.block_size / 1024
+      avail = stat.blocks_avail * stat.block_size / 1024
+      used  = size - avail
+      parc  = 100 * used / size 
+      ret.push [mts.device, mount,  size, avail, "#{parc}%", self[mount],
+                over?(mount) ? "==!ALERT!==" : "ok."]
+    }
+    ret.map{ |r|
+      sprintf(%Q[#{ r[0].length < 15   ? "%-15s " : "%s\n#{' '*16}" }], r.shift) +
+	sprintf(%Q[#{ r[0].length < 10 ? "%-10s " : "%s\n#{' '*27}" }], r.shift) +
+	sprintf("%10s %10s %4s %10s %12s", *r)
+    }
+  end
+
+  attr_reader :global_threshold, :mounts
+end
+
+
+if __FILE__ == $0
+
+  $echo_level = 3
+    
+  ##
+  ## functions
+  ##
+  
+  def version
+    puts "#{$MYNAME} version #{$VERSION}.   Copyright 2002, Tatsuki Sugiura <sugi@nemui.org>"
+  end
+  
+  def usage(io = $stdout)
+    io.print <<EOU
+Usage: #{$MYNAME} [-Vhvqsre] <-c config|global_threshold|/mount/point threshold>...
+Options: (default="-se") 
+  -V,      --version      show version
+  -h,      --help         show this message
+  -v,      --verbose      verbose output. multiple -v for increase verbosity
+  -q,      --quiet        quiet output. multiple -q for decrease verbosity
+  -s,      --summary      show summary
+  -r,      --report       show detail report
+  -e,      --errors-only  suppress "-r" and "-s" when nothing to alert
+  -c conf, --config=conf  specify config file (arguments prevail over config)
+EOU
+  end
+
+  def msg(level = 3, *msg)
+    # level:
+    #  1  fatal error message
+    #  2  warning
+    #  3  notice, normal message 
+    #  4  debug output
+    #  5- more...
+    if $echo_level < level
+      return true
+    end
+    (level < 3 ? $stderr : $stdout).print msg
+  end
+  
+  ##
+  ## main
+  ##
+  
+  opt = Hash.new
+  
+  optparser = GetoptLong.new
+  optparser.set_options(
+			["--verbose", "-v",     GetoptLong::NO_ARGUMENT],
+			["--quiet", "-q",       GetoptLong::NO_ARGUMENT],
+			["--help", "-h",        GetoptLong::NO_ARGUMENT],
+			["--version", "-V",     GetoptLong::NO_ARGUMENT],
+			["--summary", "-s",     GetoptLong::NO_ARGUMENT],
+			["--report", "-r",      GetoptLong::NO_ARGUMENT],
+			["--errors-only", "-e", GetoptLong::NO_ARGUMENT],
+			["--config", "-c",      GetoptLong::REQUIRED_ARGUMENT]
+			)
+  
+  begin
+    optparser.each_option do |name, arg|
+      if name == "--verbose"
+	$echo_level += 1
+      elsif name == "--quiet"
+	$echo_level -= 1
+      else
+	opt[name.sub(/^--/, '')] = arg
+      end
+    end
+  rescue
+    usage($stderr)
+    exit(1)
+  end
+
+  if opt["version"] 
+    version
+    exit(0)
+  end
+  
+  if opt["help"]
+    usage
+    exit(0)
+  end
+
+  if ARGV.size < 1 && !opt.has_key?("config")
+    usage($stderr)
+    exit(1)
+  end
+
+
+  dsck = DiskSpaceCheker.new
+  args = Array.new
+  
+  # read config
+  if opt.has_key?("config")
+    begin
+      File.open(opt["config"]) { |fh|
+	fh.each { |line|
+	  line.sub!(/#.*/,"")
+	  line.scan(/(\S+)/) { |part|
+	    args.push(part)
+	  }
+	}
+      }
+    rescue
+      msg 2, "Error: Can't open config (#{$!}). Ignored.\n"
+    end
+  end
+
+  args = args + ARGV
+  while arg = args.shift
+    arg = arg.to_s
+    if arg =~ /^\d+[KBbMGT%]?$/ || arg == "nocheck"
+      dsck.global_threshold = arg
+    else
+      mount = arg
+      threshold = args.shift.to_s
+      begin
+	dsck[mount] = threshold
+      rescue DiskSpaceCheker::InvalidThreshold
+	msg 2, "Error: invalid threshold '#{threshold}' for #{mount}. Ignored.\n"
+      rescue DiskSpaceCheker::NonExistMountPoint
+	msg 2, "Warning: non exist mount point (#{mount}) specified. Ignored.\n"
+      end
+    end
+  end
+
+  msg 5, "checking thresholds...\n"
+  dsck.mounts.each {|m|
+    msg 5, " #{m}\t#{dsck[m]}\n"
+  }
+
+  # set default option
+  if !opt.has_key?("summary") && !opt.has_key?("report")
+    opt["summary"] = opt["errors-only"] = true
+  end
+
+  if !opt["errors-only"] || dsck.need_alert?
+    if opt["summary"]
+      msg 4, "=== Problem summary ===\n"
+      puts dsck.summary
+    end
+
+    if opt["report"] 
+      msg 4, "=== Current Status ===\n"
+      puts dsck.report
+    end
+  end
+  dsck.error? ? exit(1) : exit(0)
+end

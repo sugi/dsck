@@ -1,0 +1,24 @@
+# Process this file with autoconf to produce a configure script.
+
+AC_INIT(dsck, 2.0.7, sugi@nemui.org)
+
+AM_INIT_AUTOMAKE(dsck, 2.0.7, sugi@nemui.org)
+AM_MAINTAINER_MODE()
+
+#AC_ARG_PROGRAM
+#AC_PROG_INSTALL
+#AC_PROG_MAKE_SET
+
+# Checks for programs.
+AC_PATH_PROG(ruby, ruby)
+test _"${ruby}" != "_" || AC_MSG_ERROR(ruby not found!)
+
+# Checks for libraries.
+
+# Checks for header files.
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+# Checks for library functions.
+
+AC_OUTPUT(Makefile dsck/Makefile dsck2mail/Makefile dsck/dsck)

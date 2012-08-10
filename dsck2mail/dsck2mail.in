@@ -1,0 +1,14 @@
+#!/bin/sh
+
+dsck="`%sbindir%/dsck -serv -c %sysconfdir%/dsck.conf`"
+
+test -z "$dsck" && exit 0
+
+echo "Subject: === `hostname -s` disk space checker ===
+X-Sender: dsck2mail
+Content-Type: text/plain; charset=us-ascii
+
+Alert on `hostname -f`
+
+$dsck
+" | sendmail root
