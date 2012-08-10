@@ -1,3 +1,10 @@
+dsck (2.0.8) unstable; urgency=low
+
+  * Transit to Debian native package.
+  * Transit to ruby1.9
+
+ -- Tatsuki Sugiura <sugi@nemui.org>  Sat, 11 Aug 2012 04:35:16 +0900
+
 dsck (2.0.7-1) unstable; urgency=low
 
   * New upstream release

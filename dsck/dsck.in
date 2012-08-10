@@ -305,12 +305,12 @@ EOU
 
   args = args + ARGV
   while arg = args.shift
-    arg = arg.to_s
+    arg = arg.join
     if arg =~ /^\d+[KBbMGT%]?$/ || arg == "nocheck"
       dsck.global_threshold = arg
     else
       mount = arg
-      threshold = args.shift.to_s
+      threshold = args.shift.join
       begin
 	dsck[mount] = threshold
       rescue DiskSpaceCheker::InvalidThreshold
