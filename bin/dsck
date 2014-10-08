@@ -16,7 +16,7 @@
 
 = SYNOPSIS
 
-((%dsck [-Vhv] <-c config | global_threshold | /mount/point threshold>...%))
+((%dsck [-Vhv] [-c config | global_threshold | /mount/point threshold]...%))
 
 = DESCRIPTION
 
@@ -65,7 +65,7 @@ Especially, after "#" until end-of-line is considerd as comment.
 
 ((%dsck -serv "95%" / 50M /tmp 5 /var/spool/squid nocheck%))
 
-This is mean
+This means
 * verbose output (+1)
 * show summary and detail when error happened
 * global threshold is 95%, "/" is 50MByte, "/tmp" is 5%
@@ -87,7 +87,7 @@ class DiskSpaceCheker < Hash
   class NonExistMountPoint < StandardError; end
   class InvalidThreshold   < StandardError; end
   
-  def initialize (global_threshold = "85%")
+  def initialize (global_threshold = "95%")
     @mounts = FileSystem.mounts.collect{|m|
       (# exclude virtual filesystem
        FileSystem.stat(m.mount).blocks != 0 &&
@@ -209,7 +209,7 @@ if __FILE__ == $0
   
   def usage(io = $stdout)
     io.print <<EOU
-Usage: #{$MYNAME} [-Vhvqsre] <-c config|global_threshold|/mount/point threshold>...
+Usage: #{$MYNAME} [-Vhvqsre] [-c config|global_threshold|/mount/point threshold]...
 Options: (default="-se") 
   -V,      --version      show version
   -h,      --help         show this message
@@ -277,12 +277,6 @@ EOU
     usage
     exit(0)
   end
-
-  if ARGV.size < 1 && !opt.has_key?("config")
-    usage($stderr)
-    exit(1)
-  end
-
 
   dsck = DiskSpaceCheker.new
   args = Array.new
