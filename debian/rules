@@ -6,12 +6,12 @@
 override_dh_install:
 	mkdir -p $(CURDIR)/debian/dsck/etc/dsck \
 		$(CURDIR)/debian/dsck/usr/share/man/man8
-	install -m 755 bin/* $(CURDIR)/debian/dsck/sbin
+	install -m 755 bin/* $(CURDIR)/debian/dsck/usr/sbin
 	install -m 644 debian/dsck.conf $(CURDIR)/debian/dsck/etc/dsck
 	cd bin && \
 	rd2 -r rd/rd2man-lib.rb dsck \
-		| sed -e 's/^\.TH - 1/.TH - 8/' \
+		| sed -e 's/^\.TH DSCK 1/.TH DSCK 8/' \
 		> $(CURDIR)/debian/dsck/usr/share/man/man8/dsck.8 
 	cd debian; rd2 -r rd/rd2man-lib.rb dsck2mail \
-		| sed -e 's/^\.TH - 1/.TH - 8/' \
+		| sed -e 's/^\.TH DSCK2MAIL 1/.TH DSCK2MAIL 8/' \
 		> $(CURDIR)/debian/dsck/usr/share/man/man8/dsck2mail.8 

@@ -7,7 +7,7 @@ Standards-Version: 3.9.3
 
 Package: dsck
 Architecture: all
-Depends: ${misc:Depends}, postfix | sendmail | qmail | exim | mail-transport-agent, ruby | ruby-interpreter, ruby-filesystem
+Depends: ${misc:Depends}, postfix | sendmail | qmail | exim | mail-transport-agent, ruby | ruby-interpreter
 Description: simple disk space checker
  disck space chcker with ruby.
  checks filesystem disk space usage by cron.
