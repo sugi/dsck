@@ -1,4 +1,4 @@
-#!@ruby@ -w
+#!/usr/bin/ruby -w
 # -*- ruby -*-
 
 #
