@@ -148,7 +148,7 @@ class DiskSpaceCheker < Hash
   end
 
   def thres_normalizer(thres)
-    if thres !~ /^\d+[KBbMGT%]?$/ && thres != "nocheck"
+    if thres !~ /^\d+[BKMGTP%]?$/ && thres != "nocheck"
       raise InvalidThreshold
     elsif thres !~ /\D/
       if thres.length < 3
@@ -325,7 +325,7 @@ EOU
 
   args = args + ARGV
   while arg = args.shift
-    if arg =~ /^\d+[KBMGT%]?$/ || arg == "nocheck"
+    if arg =~ /^\d+[BKMGTP%]?$/ || arg == "nocheck"
       dsck.global_threshold = arg
     else
       mount = arg
