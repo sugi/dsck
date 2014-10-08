@@ -2,10 +2,10 @@
 # -*- ruby -*-
 
 #
-# dsck - simple disk space checker
+# dsck - Simple disk space checker
 #
-# copyright: Tatsuki Sugiura <sugi@nemui.org>
-# license: GPL3
+# Copyright: Tatsuki Sugiura <sugi@nemui.org>
+# License: GPL-3
 #
 
 =begin
@@ -25,32 +25,32 @@
 If both "-s" and "-r" not specified, set "-se" automatically.
 
 : -V, --version
-  show version
+  Show version
 : -h, --help
-  show this message
+  Show this message
 : -v, --verbose
-  verbose output. multiple -v for increase verbosity
+  Verbose output. Multiple -v to increase verbosity
 : -q, --quiet
-  quiet output. multiple -q for decrease verbosity
+  Quiet output. Multiple -q to decrease verbosity
 : -s, --summary
-  show summary report
+  Show summary report
 : -r, --report
-  show detail report
+  Show detail report
 : -e, --errors-only
-  suppress "-r" and "-s" when nothing to alert  
+  Suppress "-r" and "-s" when nothing to alert  
 : -c ((|conf|)), --config=((|conf|))
-  specify config file (arguments prevail over config)
+  Specify config file (arguments prevail over config)
 
 == Threshold Format
 
-If argument is matched regex of (({/[0-9]+([BKMGTb%])?/})) or
-"nocheck". Then, it considerd as threshold.
+If argument is matched regex (({/[0-9]+([BKMGTb%])?/})) or
+"nocheck", it's considerd as threshold.
 
 Suffix character was consider as ((*B*))=byte, ((*K*))=KiloByte, ((*M*))=Megabyte,
 ((*G*))=GigaByte, ((*T*))=TeraByte, ((*b*))=blocks and ((*%*))=Percent.
 
-When string has not suffix character, strig they longer than ((*3*)) will
-consider ((*KiloByte*)), if not ((*Percent*)).
+When string has no suffix character, longer than ((*3*)) will
+be considered ((*KiloByte*)), if not ((*Percent*)).
 
 This script alert when use% is ((*over*)) threshold of percentage or
 filesystem available size is ((*under*)) threshold of Byte and blocks.
@@ -66,10 +66,10 @@ Especially, after "#" until end-of-line is considerd as comment.
 ((%dsck -serv "95%" / 50M /tmp 5 /var/spool/squid nocheck%))
 
 This means
-* verbose output (+1)
-* show summary and detail when error happened
-* global threshold is 95%, "/" is 50MByte, "/tmp" is 5%
-* "/var/spool/squid" will not checked
+* Verbose output (+1)
+* Show summary and detail when error happened
+* Global threshold is 95%, "/" is 50MByte, "/tmp" is 5%
+* "/var/spool/squid" will not be checked
 
 =end
 
@@ -78,7 +78,7 @@ require "getoptlong"
 require "filesystem"
 
 $MYNAME  = File.basename($0)
-$VERSION = "2.0.5"
+$VERSION = "3.0.0"
 
 ##
 ## classes

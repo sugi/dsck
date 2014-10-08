@@ -1,6 +1,8 @@
+require File.dirname(__FILE__).join('bin/dsck')
+
 Gem::Specification.new do |s|
   s.name        = 'dsck'
-  s.version     = '3.0.0'
+  s.version     = $VERSION
   s.date        = '2014-10-08'
   s.summary     = "Simple disk space checker"
   s.description = ""
