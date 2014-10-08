@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dsck="`%sbindir%/dsck -serv -c %sysconfdir%/dsck.conf`"
+dsck="`dsck -serv -c /etc/dsck.conf`"
 
 test -z "$dsck" && exit 0
 

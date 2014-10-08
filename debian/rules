@@ -7,6 +7,8 @@ override_dh_install:
 	mkdir -p $(CURDIR)/debian/dsck/etc/dsck \
 		$(CURDIR)/debian/dsck/usr/share/man/man8
 	install -m 755 bin/* $(CURDIR)/debian/dsck/usr/sbin
+	perl -i -npe 's# -c /etc/dsck\.conf# -c /etc/dsck/dsck.conf#' \
+		$(CURDIR)/debian/dsck/usr/sbin/dsck2mail
 	install -m 644 debian/dsck.conf $(CURDIR)/debian/dsck/etc/dsck
 	cd bin && \
 	rd2 -r rd/rd2man-lib.rb dsck \
