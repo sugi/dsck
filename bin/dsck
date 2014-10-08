@@ -314,7 +314,7 @@ EOU
 	fh.each { |line|
 	  line.sub!(/#.*/,"")
 	  line.scan(/(\S+)/) { |part|
-	    args.push(part)
+	    args.push(*part)
 	  }
 	}
       }
@@ -325,7 +325,7 @@ EOU
 
   args = args + ARGV
   while arg = args.shift
-    if arg =~ /^\d+[KBbMGT%]?$/ || arg == "nocheck"
+    if arg =~ /^\d+[KBMGT%]?$/ || arg == "nocheck"
       dsck.global_threshold = arg
     else
       mount = arg
