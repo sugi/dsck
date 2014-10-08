@@ -3,24 +3,15 @@
 %:
 	dh $@
 
-override_dh_auto_configure:
-	./configure --host=$(DEB_HOST_GNU_TYPE) \
-		--build=$(DEB_BUILD_GNU_TYPE) \
-		--prefix=/usr --mandir=\$${prefix}/share/man \
-		--infodir=\$${prefix}/share/info \
-		--sysconfdir=/etc/dsck
-
-
 override_dh_install:
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/dsck
 	mkdir -p $(CURDIR)/debian/dsck/etc/dsck \
 		$(CURDIR)/debian/dsck/usr/share/man/man8
+	install -m 755 bin/* $(CURDIR)/debian/dsck/sbin
 	install -m 644 debian/dsck.conf $(CURDIR)/debian/dsck/etc/dsck
-	cd dsck && \
+	cd bin && \
 	rd2 -r rd/rd2man-lib.rb dsck \
 		| sed -e 's/^\.TH - 1/.TH - 8/' \
 		> $(CURDIR)/debian/dsck/usr/share/man/man8/dsck.8 
 	cd debian; rd2 -r rd/rd2man-lib.rb dsck2mail \
 		| sed -e 's/^\.TH - 1/.TH - 8/' \
 		> $(CURDIR)/debian/dsck/usr/share/man/man8/dsck2mail.8 
-
