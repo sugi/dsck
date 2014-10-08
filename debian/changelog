@@ -1,3 +1,9 @@
+dsck (3.0.0) stable; urgency=low
+
+  * Update version for current stable.
+
+ -- Tatsuki Sugiura <sugi@nemui.org>  Wed, 08 Oct 2014 17:52:53 +0900
+
 dsck (2.0.9) unstable; urgency=low
 
   * Fix header formatting.
