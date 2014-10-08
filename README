@@ -4,22 +4,19 @@ What's this?
 
 System requirement
 
- - ruby (1.6-)
+ - ruby (1.8+)
  - filesystem module
 
 Install
 
- ./configure
- make
- make install
+ gem install dsck
 
-Supports
+Support scripts
 
  - dsck2mail
    sample shell wrapper script for crontab.
-   To install this script, call ./configure with "--with-dsck2mail".
 
 Usage
 
- see, "rd2 dsck"
+ see "rd2 dsck" or "dsck --help".
 
