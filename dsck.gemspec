@@ -13,4 +13,5 @@ Gem::Specification.new do |s|
   s.license       = 'GPL-3'
 
   s.files       = Dir['bin/*']
+  s.extra_rdoc_files = %w(README.rdoc ChangeLog)
 end

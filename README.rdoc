@@ -1,0 +1,67 @@
+= dsck
+
+== What's this?
+
+Simple disk space checker
+
+== System requirement
+
+* ruby (1.8+)
+* can execute "df -k"
+
+== Install
+
+ gem install dsck
+
+== Support scripts
+
+* dsck2mail - sample shell wrapper script for crontab.
+
+== Usage
+
+See "rd2 dsck" or "dsck -h" for details.
+
+ dsck [-Vhv] [-c config | global_threshold | /mount/point threshold]...
+
+=== Options
+
+[-V, +--version+] Show version
+[-h, +--help+] Show this message
+[-v, +--verbose+] Verbose output. Multiple -v to increase verbosity
+[-q, +--quiet+] Quiet output. Multiple -q to decrease verbosity
+[-s, +--summary+] Show summary report
+[-r, +--report+] Show detail report
+[-e, +--errors-only+] Suppress "-r" and "-s" when nothing to alert  
+[-c _conf_, +--config=+_conf_] Specify config file (arguments prevail over config)
+
+If both of "-s" or "-r" are not specified, fallback to "-se".
+
+=== Threshold Format
+
+If argument is matched regex "/[0-9]+\[%BKMGT]?/" or
+"nocheck", it's considerd as threshold.
+
+Suffix character was consider as *B*=byte, *K*=KiloByte, *M*=Megabyte,
+*G*=GigaByte, *T*=TeraByte, *P*=PetaByte and %=Percent.
+
+When string has no suffix character, longer than *3* will
+be treated as *KiloByte*, if not as *percent*.
+
+This script alert when use% is *over* threshold of percentage or
+filesystem available size is *under* threshold of Byte and blocks.
+
+=== ConfigFile Format
+
+Same as command line arguments.
+
+Especially, after "#" until end-of-line is considerd as comment.
+
+=== Example
+
+  dsck -serv "95%" / 50M /tmp 5 /var/spool/squid nocheck
+
+This means
+* Verbose output (+1)
+* Show summary and detail when error happened
+* Global threshold is 95%, "/" is 50MByte, "/tmp" is 5%
+* "/var/spool/squid" will not be checked
