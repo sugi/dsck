@@ -37,7 +37,7 @@ If both "-s" and "-r" not specified, set "-se" automatically.
 : -r, --report
   Show detail report
 : -e, --errors-only
-  Suppress "-r" and "-s" when nothing to alert  
+  Suppress "-r" and "-s" when nothing to alert
 : -c ((|conf|)), --config=((|conf|))
   Specify config file (arguments prevail over config)
 
@@ -87,7 +87,7 @@ class DiskSpaceCheker < Hash
   class NonExistMountPoint < StandardError; end
   class InvalidThreshold   < StandardError; end
   DF_COLS = %w(device size used avail use_per mount)
-  
+
   def initialize (global_threshold = "90%")
     @mounts = read_mounts
     @global_threshold = thres_normalizer(global_threshold)
@@ -132,7 +132,7 @@ class DiskSpaceCheker < Hash
   def [](mount)
     self.has_key?(mount) ? super : @global_threshold
   end
-    
+
   def need_alert?
     @mounts.each { |mount, minfo|
       if over?(mount)
@@ -141,7 +141,7 @@ class DiskSpaceCheker < Hash
     }
     false
   end
-  alias error? need_alert? 
+  alias error? need_alert?
 
   def global_threshold=(thres)
     @global_threshold = thres_normalizer(thres)
@@ -153,7 +153,7 @@ class DiskSpaceCheker < Hash
     elsif thres !~ /\D/
       if thres.length < 3
 	thres = thres + "%"
-      else 
+      else
 	thres = thres + "K"
       end
     end
@@ -175,7 +175,6 @@ class DiskSpaceCheker < Hash
     end
     minfo.avail <= thres
   end
-  
 
   def summary
     ret = Array.new
@@ -224,19 +223,19 @@ end
 if __FILE__ == $0
 
   $echo_level = 3
-    
+
   ##
   ## functions
   ##
-  
+
   def version
     puts "#{$MYNAME} version #{$VERSION}.   Copyright 2002, Tatsuki Sugiura <sugi@nemui.org>"
   end
-  
+
   def usage(io = $stdout)
     io.print <<EOU
 Usage: #{$MYNAME} [-Vhvqsre] [-c config|global_threshold|/mount/point threshold]...
-Options: (default="-se") 
+Options: (default="-se")
   -V,      --version      show version
   -h,      --help         show this message
   -v,      --verbose      verbose output. multiple -v for increase verbosity
@@ -252,7 +251,7 @@ EOU
     # level:
     #  1  fatal error message
     #  2  warning
-    #  3  notice, normal message 
+    #  3  notice, normal message
     #  4  debug output
     #  5- more...
     if $echo_level < level
@@ -260,13 +259,13 @@ EOU
     end
     (level < 3 ? $stderr : $stdout).print msg.join
   end
-  
+
   ##
   ## main
   ##
-  
+
   opt = Hash.new
-  
+
   optparser = GetoptLong.new
   optparser.set_options(
 			["--verbose", "-v",     GetoptLong::NO_ARGUMENT],
@@ -278,7 +277,7 @@ EOU
 			["--errors-only", "-e", GetoptLong::NO_ARGUMENT],
 			["--config", "-c",      GetoptLong::REQUIRED_ARGUMENT]
 			)
-  
+
   begin
     optparser.each_option do |name, arg|
       if name == "--verbose"
@@ -294,11 +293,11 @@ EOU
     exit(1)
   end
 
-  if opt["version"] 
+  if opt["version"]
     version
     exit(0)
   end
-  
+
   if opt["help"]
     usage
     exit(0)
@@ -306,7 +305,7 @@ EOU
 
   dsck = DiskSpaceCheker.new
   args = Array.new
-  
+
   # read config
   if opt.has_key?("config")
     begin
@@ -356,7 +355,7 @@ EOU
       puts dsck.summary
     end
 
-    if opt["report"] 
+    if opt["report"]
       msg 4, "=== Current Status ===\n"
       puts dsck.report
     end
