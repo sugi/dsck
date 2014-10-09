@@ -1,0 +1,6 @@
+*.gem
+*.bak
+*.org
+*~
+.*.sw[po]
+*.old
