@@ -10,8 +10,9 @@ Gem::Specification.new do |s|
   s.authors     = ["Tatsuki Sugiura"]
   s.email       = 'sugi@nemui.org'
   s.homepage    = 'http://github.com/sugi/dsck'
-  s.license       = 'GPL-3'
+  s.license     = 'GPL-3'
 
-  s.files       = Dir['bin/*']
+  s.files	= Dir['bin/*']
+  s.executables = %w(dsck)
   s.extra_rdoc_files = %w(README.rdoc ChangeLog)
 end
