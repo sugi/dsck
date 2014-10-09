@@ -220,7 +220,7 @@ class DiskSpaceCheker < Hash
 end
 
 
-if __FILE__ == $0
+if File.basename(__FILE__) == File.basename($0)
 
   $echo_level = 3
 
