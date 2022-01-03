@@ -1,3 +1,9 @@
+dsck (3.0.2) stable; urgency=medium
+
+  * Fix /usr/sbin/dsck for syntax warning.
+
+ -- Tatsuki Sugiura <sugi@nemui.org>  Mon, 03 Jan 2022 12:16:15 +0900
+
 dsck (3.0.1) stable; urgency=medium
 
   * Fix PATH environment on crontab.
