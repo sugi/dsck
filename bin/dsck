@@ -88,7 +88,7 @@ class DiskSpaceCheker < Hash
   class InvalidThreshold   < StandardError; end
   DF_COLS = %w(device size used avail use_per mount)
 
-  def initialize (global_threshold = "90%")
+  def initialize(global_threshold = "90%")
     @mounts = read_mounts
     @global_threshold = thres_normalizer(global_threshold)
   end
